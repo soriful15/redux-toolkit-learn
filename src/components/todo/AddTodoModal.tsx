@@ -20,14 +20,18 @@ const AddTodoModal = () => {
 
   const dispatch = useAppDispatch();
 
+  const randomString = Math.random().toString(36).substring(2, 7);
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const taskDetails = {
+      id: randomString,
       title: task,
       description: description,
     };
     // console.log({ task, description });
     dispatch(addTodo(taskDetails));
+    // console.log(taskDetails);
   };
 
   return (
