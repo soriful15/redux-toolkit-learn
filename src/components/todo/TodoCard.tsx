@@ -1,29 +1,57 @@
-import { useAppDispatch } from "@/redux/hook";
+// import { useAppDispatch } from "@/redux/hook";
+import UpdateTodo from "../ui/UpdateTodo";
 import { Button } from "../ui/button";
-import {
-  removeTodo,
-  toggleCompleted,
-  // updateTodo,
-} from "@/redux/features/todoSlice";
+// import {
+//   removeTodo,
+//   // toggleCompleted,
+//   // updateTodo,
+// } from "@/redux/features/todoSlice";
+import { useDeleteTodoMutation, useUpdatedTodoMutation } from "@/redux/api/api";
 // https://github.com/nazmulhasannasim333/react-redux-todo/tree/main
 type TTodoCardsProps = {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   isCompleted?: boolean;
+  priority: string;
 };
 
-const TodoCard = ({ title, description, id, isCompleted }: TTodoCardsProps) => {
-  const dispatch = useAppDispatch();
+const TodoCard = ({
+  title,
+  description,
+  _id,
+  isCompleted,
+  priority,
+}: TTodoCardsProps) => {
+  // const dispatch = useAppDispatch();
+
+  const [updateTodo] = useUpdatedTodoMutation();
+  const [deleteTodo] = useDeleteTodoMutation();
 
   const toggleState = () => {
     // console.log("cliceked");
-    dispatch(toggleCompleted(id));
+    // dispatch(toggleCompleted(id));
+
+    // const taskData = {
+    //   title,
+    //   description,
+    //   priority,
+    //   isCompleted: !isCompleted,
+    // };
+
+    const taskData = {
+      id: _id,
+      data: {
+        title,
+        description,
+        priority,
+        isCompleted: !isCompleted,
+      },
+    };
+
+    console.log(taskData);
+    updateTodo(taskData);
   };
-  // const updated = () => {
-  //   // console.log("cliceked");
-  //   dispatch(updateTodo(id));
-  // };
 
   return (
     <div className="bg-white rounded-xl flex justify-between items-center p-3 border">
@@ -33,9 +61,22 @@ const TodoCard = ({ title, description, id, isCompleted }: TTodoCardsProps) => {
         type="checkbox"
         name="compete"
         id="complete"
+        defaultChecked={isCompleted}
       />
       <p className="font-semibold flex-1">{title}</p>
-      {/* <p>Time</p> */}
+
+      <div className="flex-1 flex items-center gap-2">
+        <div
+          className={`size-3 rounded-full
+         ${priority === "high" ? "bg-red-500" : null}
+         ${priority === "medium" ? "bg-yellow-500" : null}
+         ${priority === "low" ? "bg-green-500" : null}
+         
+         `}
+        ></div>
+        <p>{priority}</p>
+      </div>
+
       <div className="flex-1">
         {isCompleted ? (
           <p className="text-green-500">Done</p>
@@ -43,9 +84,10 @@ const TodoCard = ({ title, description, id, isCompleted }: TTodoCardsProps) => {
           <p className="text-red-500">Pending</p>
         )}
       </div>
-      <p className="flex-1">{description}</p>
+      <p className="flex-[2]">{description}</p>
       <div className="space-x-5">
-        <Button onClick={() => dispatch(removeTodo(id))} className="bg-red-500">
+        {/* <Button onClick={() => dispatch(removeTodo(id))} className="bg-red-500"> */}
+        <Button onClick={() => deleteTodo(_id)} className="bg-red-500">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -61,7 +103,7 @@ const TodoCard = ({ title, description, id, isCompleted }: TTodoCardsProps) => {
             />
           </svg>
         </Button>
-        <Button className="bg-[#5C53FE]">
+        {/* <Button className="bg-[#5C53FE]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -76,7 +118,14 @@ const TodoCard = ({ title, description, id, isCompleted }: TTodoCardsProps) => {
               d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
             />
           </svg>
-        </Button>
+        </Button> */}
+        <UpdateTodo
+          _id={_id}
+          title={title}
+          priority={priority}
+          description={description}
+          isCompleted={isCompleted}
+        ></UpdateTodo>
       </div>
     </div>
   );
